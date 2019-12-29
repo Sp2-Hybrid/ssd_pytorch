@@ -45,20 +45,20 @@
 ## 2.数据集整理
 
 	- 按照voc数据集格式进行整理，数据集的根目录为"data/VOCdevkit"
-
+	
 	- 与voc格式稍有不同，使用txt格式的标注文件，标注文件的读取见"data/voc0712.py"中VOCDetection类
-
+	
 	- 数据集中的trainval.txt对应训练集，test.txt对应测试集
 
 ## 3. 网络结构
 
 ### 	3.1base-net  VGG网络
 
-​			![img](https://pic4.zhimg.com/80/v2-8a58fe538749ff747838ae0b1037b53f_hd.jpg)
+​			![base-net](C:\Users\songpeng\Desktop\ssd.pytorch.2\base-net.jpg)
 
 ### 	3.2 辅助特征层
 
-​			![](https://pic4.zhimg.com/80/v2-4f721a8f7fdb4dbb58cddf958255e99b_hd.jpg)
+​			![extra-layers](C:\Users\songpeng\Desktop\ssd.pytorch.2\extra-layers.jpg)
 
 ### 	3.3 类别预测层和边界框预测层
 
@@ -85,12 +85,3 @@ python calculate_map_test.py
 ```
 
 将得到最终的计算结果。
-
-
-
-
-
-
-
-
-
