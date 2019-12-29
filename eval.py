@@ -36,7 +36,7 @@ def str2bool(v):
 parser = argparse.ArgumentParser(
     description='Single Shot MultiBox Detector Evaluation')
 parser.add_argument('--trained_model',
-                    default='weights/ssd300_COCO_65000.pth', type=str,
+                    default='weights/ssd300_COCO_70000.pth', type=str,
                     help='Trained state_dict file path to open')
 parser.add_argument('--save_folder', default='eval/', type=str,
                     help='File path to save results')
@@ -66,7 +66,7 @@ if torch.cuda.is_available():
 else:
     torch.set_default_tensor_type('torch.FloatTensor')
 
-annopath = os.path.join(args.voc_root, 'VOC', 'Annotations', '%s.xml')
+annopath = os.path.join(args.voc_root, 'VOC', 'Annotations_txt', '%s.txt')
 imgpath = os.path.join(args.voc_root, 'VOC', 'JPEGImages', '%s.jpg')
 imgsetpath = os.path.join(args.voc_root, 'VOC', 'ImageSets',
                           'Main', '{:s}.txt')
@@ -103,22 +103,24 @@ class Timer(object):
 
 def parse_rec(filename):
     """ Parse a PASCAL VOC xml file """
-    tree = ET.parse(filename)
+    with open(filename, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
     objects = []
-    for obj in tree.findall('object'):
-        obj_struct = {}
-        obj_struct['name'] = obj.find('name').text
-        #obj_struct['pose'] = obj.find('pose').text
-        #obj_struct['truncated'] = int(obj.find('truncated').text)
-        obj_struct['difficult'] = int(obj.find('difficult').text)
-        bbox = obj.find('bndbox')
-        obj_struct['bbox'] = [int(bbox.find('xmin').text) - 1,
-                              int(bbox.find('ymin').text) - 1,
-                              int(bbox.find('xmax').text) - 1,
-                              int(bbox.find('ymax').text) - 1]
-        objects.append(obj_struct)
-
+    for line in lines:
+        line = line.strip()
+        line = line.split()
+        object_struct = {}
+        if line[1] == '带电芯充电宝':
+            object_struct['name'] = 'core'
+        elif line[1] == '不带电芯充电宝':
+            object_struct['name'] = 'coreless'
+        else:
+            continue
+        object_struct['difficult'] = 0
+        object_struct['bbox'] = [int(line[2])-1, int(line[3])-1, int(line[4])-1, int(line[5])-1]
+        objects.append(object_struct)
     return objects
+    
 
 
 def get_output_dir(name, phase):

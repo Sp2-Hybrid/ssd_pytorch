@@ -12,10 +12,12 @@ import torch
 import torch.utils.data as data
 import cv2
 import numpy as np
+
 if sys.version_info[0] == 2:
     import xml.etree.cElementTree as ET
 else:
     import xml.etree.ElementTree as ET
+#ET.parse(xml_file_path).getroot() 获取第一标签
 '''
 VOC_CLASSES = (  # always index 0
     'aeroplane', 'bicycle', 'bird', 'boat',
@@ -30,7 +32,7 @@ VOC_CLASSES = (
 )
 
 # note: if you used our download scripts, this should be right
-VOC_ROOT = osp.join('/home', 'songpeng', 'ssd', 'ssd.pytorch', 'data', 'VOCdevkit',)
+VOC_ROOT = osp.join('/home', 'songpeng', 'ssd', 'ssd.pytorch.2', 'data', 'VOCdevkit',)
 
 
 class VOCAnnotationTransform(object):
@@ -51,7 +53,7 @@ class VOCAnnotationTransform(object):
             zip(VOC_CLASSES, range(len(VOC_CLASSES))))
         self.keep_difficult = keep_difficult
 
-    def __call__(self, target, width, height):
+    def __call__(self, targets, width, height):
         """
         Arguments:
             target (annotation) : the target annotation to be made usable
@@ -60,26 +62,37 @@ class VOCAnnotationTransform(object):
             a list containing lists of bounding boxes  [bbox coords, class name]
         """
         res = []
-        for obj in target.iter('object'):
-            difficult = int(obj.find('difficult').text) == 1
-            if not self.keep_difficult and difficult:
+        for line in targets:
+            line = line.strip()
+            line = line.split()
+            if line == "":
                 continue
-            name = obj.find('name').text.lower().strip()
-            bbox = obj.find('bndbox')
-
-            pts = ['xmin', 'ymin', 'xmax', 'ymax']
+            
+            if line[1] == '带电芯充电宝':
+                name  = 'core' 
+            elif line[1] == '不带电芯充电宝':
+                name = "coreless" 
+            else:
+                continue
             bndbox = []
-            for i, pt in enumerate(pts):
-                cur_pt = int(bbox.find(pt).text) - 1
-                # scale height or width
-                cur_pt = cur_pt / width if i % 2 == 0 else cur_pt / height
-                bndbox.append(cur_pt)
-            label_idx = self.class_to_ind[name]
+            xmin = int(line[2]) -1 
+            ymin = int(line[3]) -1
+            xmax = int(line[4]) -1 
+            ymax = int(line[5]) -1
+            
+            xmin = xmin / width
+            xmax = xmax / width
+            ymin = ymin / height
+            ymax = ymax / height 
+            bndbox.append(xmin)
+            bndbox.append(xmax)
+            bndbox.append(ymin)
+            bndbox.append(ymax)
+            
+            label_idx = self.class_to_ind[name] 
             bndbox.append(label_idx)
-            res += [bndbox]  # [xmin, ymin, xmax, ymax, label_ind]
-            # img_id = target.find('filename').text[:-4]
-
-        return res  # [[xmin, ymin, xmax, ymax, label_ind], ... ]
+            res += [bndbox]
+        return res
 
 
 class VOCDetection(data.Dataset):
@@ -108,14 +121,24 @@ class VOCDetection(data.Dataset):
         self.transform = transform
         self.target_transform = target_transform
         self.name = dataset_name
-        self._annopath = osp.join('%s', 'Annotations', '%s.xml')
-        self._imgpath = osp.join('%s', 'JPEGImages', '%s.jpg')
-        self.ids = list()
-        for (year, name) in image_sets:
-            #rootpath = osp.join(self.root, 'VOC' + year)
-            rootpath = osp.join(self.root, 'VOC')
-            for line in open(osp.join(rootpath, 'ImageSets', 'Main', name + '.txt')):
-                self.ids.append((rootpath, line.strip()))
+        if image_sets[0][1] == 'test':
+            self._annopath = osp.join('%s', 'eval', 'Anno_test', '%s.txt')
+            self._imgpath = osp.join('%s', 'eval', 'Image_test', '%s.jpg')
+            self.ids = list()
+            for (year, name) in image_sets:
+                for line in open(osp.join(self.root, 'eval', 'core_coreless_test.txt')):
+                    self.ids.append((self.root, line.strip()))
+        else:
+            self._annopath = osp.join('%s', 'Annotations_txt', '%s.txt')
+            self._imgpath = osp.join('%s', 'JPEGImages', '%s.jpg')
+            
+            self.ids = list()
+            for (year, name) in image_sets:
+                #rootpath = osp.join(self.root, 'VOC' + year)
+                rootpath = osp.join(self.root, 'VOC')
+                for line in open(osp.join(rootpath, 'ImageSets', 'Main', name + '.txt')):
+                    self.ids.append((rootpath, line.strip()))
+        
 
     def __getitem__(self, index):
         im, gt, h, w = self.pull_item(index)
@@ -128,11 +151,14 @@ class VOCDetection(data.Dataset):
     def pull_item(self, index):
         img_id = self.ids[index]
 
-        target = ET.parse(self._annopath % img_id).getroot()
+        #target = ET.parse(self._annopath % img_id).getroot()
+        with open(self._annopath % img_id, 'r', encoding='utf-8') as f:
+            target = f.readlines()
         img = cv2.imread(self._imgpath % img_id)
         height, width, channels = img.shape
 
         if self.target_transform is not None:
+            #调用__call__
             target = self.target_transform(target, width, height)
 
         if self.transform is not None:
@@ -173,6 +199,8 @@ class VOCDetection(data.Dataset):
         '''
         img_id = self.ids[index]
         anno = ET.parse(self._annopath % img_id).getroot()
+        with open(self._annopath % img_id, 'r', encoding='utf-8') as f:
+            anno = f.readlines()
         gt = self.target_transform(anno, 1, 1)
         return img_id[1], gt
 
