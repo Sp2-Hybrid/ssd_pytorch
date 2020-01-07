@@ -72,10 +72,10 @@ python train.py
 
 ## 5.测试
 
-将测试所用的文件Anno_test和Image_test以及core_coreless_test.txt文件复制到eval文件夹下，运行指令：
+在eval中进行测试。将测试所用的文件Anno_test和Image_test以及core_coreless_test.txt文件复制到eval文件夹下，运行指令：
 
 ```python
-python test.py --voc_root 'eval所在的父目录'
+python eval_test.py --voc_root 'eval所在的父目录'
 ```
 
 在"eval/results"目录下将得到测试结果文件，接着运行：
