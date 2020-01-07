@@ -2,7 +2,7 @@
 
 ## 1. 项目文件结构
 
- - data
+ - data（存储数据集，使用VOC格式）
 
    - VOCdevkit
      - VOC
@@ -21,7 +21,7 @@
    - config.py
    - coco_labels.txt
 
-- eval
+- eval（模型训练后进行测试）
 
   - Anno_test
   - Image_test
@@ -40,7 +40,7 @@
 
 - test.py
 
-- train.py
+- train.py（模型训练）
 
 ## 2.数据集整理
 
