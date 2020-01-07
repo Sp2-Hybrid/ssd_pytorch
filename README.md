@@ -54,11 +54,11 @@
 
 ### 	3.1base-net  VGG网络
 
-​			![base-net](C:\Users\songpeng\Desktop\ssd.pytorch.2\base-net.jpg)
+​			![base-net](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/base-net.jpg)
 
 ### 	3.2 辅助特征层
 
-​			![extra-layers](C:\Users\songpeng\Desktop\ssd.pytorch.2\extra-layers.jpg)
+​			![extra-layers](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/extra-layers.jpg)
 
 ### 	3.3 类别预测层和边界框预测层
 
