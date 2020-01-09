@@ -54,11 +54,11 @@
 
 ### 	3.1base-net  VGG网络
 
-​			![base-net](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/base-net.jpg)
+​			![base-net](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/img/base-net.jpg)
 
 ### 	3.2 辅助特征层
 
-​			![extra-layers](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/extra-layers.jpg)
+​			![extra-layers](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/img/extra-layers.jpg)
 
 ### 	3.3 类别预测层和边界框预测层
 
@@ -75,7 +75,7 @@ python train.py
 在eval中进行测试。将测试所用的文件Anno_test和Image_test以及core_coreless_test.txt文件复制到eval文件夹下，运行指令：
 
 ```python
-python eval_test.py --voc_root 'eval所在的父目录'
+python test_eval.py --voc_root 'eval所在的父目录'
 ```
 
 在"eval/results"目录下将得到测试结果文件，接着运行：
@@ -85,3 +85,17 @@ python calculate_map_test.py
 ```
 
 将得到最终的计算结果。
+
+需要注意的是，在进行测试时，需要在data/voc0712.py和calculate_map_test.py中修改相关路径。
+
+---
+
+- voc0712.py
+
+  ![base-net](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/img/voc0712.jpg)
+
+- calculate_map_test.py
+
+  ![base-net](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/img/voc0712.jpg)
+
+  
