@@ -96,6 +96,14 @@ python calculate_map_test.py
 
 - calculate_map_test.py
 
-  ![base-net](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/img/voc0712.jpg)
+  ![base-net](https://github.com/Sp2-Hybrid/ssd_pytorch/blob/master/img/voc0712.jpg)		       
 
-  
+---
+
+## 6. 迁移
+
+需要修改相关路径和配置：
+
+* data/voc0712.py中修改VOC_ROOT。
+* train.py中修改parser解析器中的--basenet。
+* 按照5.测试中的路径修改为对应的路径。
